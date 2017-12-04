@@ -14,9 +14,9 @@ data = data.split(';')
 net_size = int(data[0])
 PATH_SIZE = net_size
 capacities = [None] * net_size
-for i in range(net_size):
-    capacities[i] = [0] * net_size
-    capacities[i][i] = MAX_CAP
+for value in range(net_size):
+    capacities[value] = [0] * net_size
+    capacities[value][value] = MAX_CAP
 
 for value in data[1:]:
     line = value.split(',')
@@ -32,21 +32,21 @@ def get_path_cap(path, values):
     for i in range(len(path[1:])):
         length = values[path[i]][path[i+1]]
         min_value = length if length < min_value else min_value
-        if path[i+1] == END and min_value > 0 and min_value < MAX_CAP:
+        if path[i+1] == END and 0 < min_value < MAX_CAP:
             break
     return min_value
 
 
-def crossing(first_path, second_path):
-    result = [None]*PATH_SIZE
+def cross(first_path, second_path):
+    result_path = [None]*PATH_SIZE
     for j in range(PATH_SIZE):
         sample = random.randrange(0, 1)
-        result[j] = first_path[j] if sample else second_path[j]
+        result_path[j] = first_path[j] if sample else second_path[j]
 
-    return result
+    return result_path
 
 
-def mutation(path):
+def make_mutation(path):
     first = random.randint(1, net_size-2)
     second = random.randint(1, net_size-2)
     path[first], path[second] = path[second], path[first]
@@ -80,7 +80,7 @@ def new_generation(paths):
     for i in range(size):
         for j in range(size):
             if i != j:
-                new_paths.append(mutation(crossing(paths[i],paths[j])))
+                new_paths.append(make_mutation(cross(paths[i], paths[j])))
     return new_paths + paths
 
 
@@ -90,9 +90,8 @@ def print_paths(paths):
             print('path:', path, get_path_cap(path, capacities))
 
 
-paths = create_start_caps()
-for i in range(10):
-    paths = new_generation(selection(paths))
+data = create_start_caps()
+for value in range(100):
+    data = new_generation(selection(data))
 
-print_paths(paths)
-
+print_paths(data)

@@ -1,4 +1,5 @@
 import random
+from random import shuffle
 
 MAX_CAP = 10**5
 POPULATION_SIZE = 30
@@ -45,12 +46,18 @@ def crossing(first_path, second_path):
     return result
 
 
+def mutation(path):
+    first = random.randint(1, net_size-2)
+    second = random.randint(1, net_size-2)
+    path[first], path[second] = path[second], path[first]
+    return path
+
+
 def create_start_caps():
     paths = list()
     for i in range(POPULATION_SIZE):
-        path = list()
-        for j in range(PATH_SIZE):
-            path.append(random.randrange(0, net_size))
+        path = [x for x in range(net_size)]
+        shuffle(path)
         paths.append(set_bounds(path, START, END))
     return paths
 
@@ -73,7 +80,7 @@ def new_generation(paths):
     for i in range(size):
         for j in range(size):
             if i != j:
-                new_paths.append(crossing(paths[i],paths[j]))
+                new_paths.append(mutation(crossing(paths[i],paths[j])))
     return new_paths + paths
 
 
@@ -84,7 +91,7 @@ def print_paths(paths):
 
 
 paths = create_start_caps()
-for i in range(0):
+for i in range(10):
     paths = new_generation(selection(paths))
 
 print_paths(paths)
